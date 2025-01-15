@@ -1,0 +1,35 @@
+    network_file=open(filename, mode="r")
+    network={}          #Tietorakenne network on sanakirja johon on lisätty listoja friends tai niiden muokattuja versioita
+                        #new_friends tai copy_of_friends.
+    for line in network_file:
+        if line[0]=="#":
+            continue
+        friends=line.strip()
+        friends=friends.split(";")
+        if len(friends)>1:
+            copy_of_friends = list(friends)     #copy_of_friends on kopio friends listasta, koska en halua muokata alkuperäistä listaa.
+            name = friends[0]                   #Name on ensimmöinen ihminen, jonka ystäviä kaikki ovat
+            copy_of_friends.remove(name)        #Poistan name arvon listan kopiosta
+            for name1 in copy_of_friends:
+                if name1==name:
+                    copy_of_friends.remove(name1)   #Ei voi olla itsensä kaveri!
+            if name not in network:
+                network[name] = copy_of_friends
+            else:
+                already_friendswith=network.get(name)   #Jos ollaan lisätty tietorakenteeseen tälle henkilölle jo aiemmin ystäviä, haetaan dictistä
+                                                        #aiemmat ystävät ja lisätään ne toisiinsa.
+                new_friends=list(copy_of_friends)
+                for n_friend in already_friendswith:
+                    if n_friend not in new_friends:
+                        new_friends.append(n_friend)
+                network[name]=new_friends
+            for friend in copy_of_friends:              #Lisätään myös ensimmäinen henkilö name kaikkien muiden ystävä listoihin,jos ei ole jo.
+                if friend not in network:
+                    name2=[]
+                    name2.append(name)
+                    network[friend] = name2
+                else:
+                    already_friendswith = list(network.get(friend))
+                    if name not in already_friendswith:
+                        already_friendswith.append(name)
+                        network[friend]=already_friendswith
